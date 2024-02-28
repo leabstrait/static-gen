@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section>
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
+        {{ content | safe }}
+        <ul>
+            <li><strong>Email:</strong> <a href="mailto:{{ social.email }}">{{ social.email }}</a></li>
+            <li><strong>Twitter:</strong> <a href="https://twitter.com/{{ social.twitter }}">@{{ social.twitter }}</a></li>
+        </ul>
+    </section>
+{% endblock content %}

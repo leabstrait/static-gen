@@ -1,0 +1,115 @@
+/* base.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 200px;
+    background-color: #f4f4f4;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 20px;
+    transition: left 0.3s ease; /* Add transition for smooth animation */
+}
+
+.sidebar nav p {
+    font-weight: bold;
+    color: blue;
+    padding: 0;
+}
+
+.sidebar nav p a {
+    padding: 10px;
+    text-decoration: none;
+    color: blue;
+    display: block;
+}
+
+.sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar nav ul li {
+    padding: 10px;
+}
+
+.sidebar nav ul li a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+.sidebar nav ul li a:hover {
+    background-color: #ddd;
+}
+
+/* Hamburger Icon Styles */
+.hamburger {
+    display: none;
+}
+
+/* Close Button Styles */
+.close-btn {
+    display: none; /* Hide the close button by default */
+    padding-right: 15px;
+    text-align: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 768px) {
+    .hamburger {
+        display: block;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        cursor: pointer;
+    }
+
+    .close-btn {
+        display: block; /* Show the close button on small screens */
+    }
+
+    .sidebar {
+        left: -200px; /* Initially hide the sidebar on small screens */
+    }
+
+    .main-content {
+        margin-left: 0; /* Adjust margin to remove gap when sidebar is hidden */
+    }
+
+    .sidebar.open {
+        left: 0; /* Show the sidebar when open */
+    }
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #f4f4f4;
+    padding: 10px;
+    margin-top: auto;
+}
+
+/* Main Content Styles */
+.main-content {
+    margin-left: 200px; /* Adjust margin to accommodate the sidebar */
+    padding: 20px;
+}
+
+@media only screen and (max-width: 768px) {
+    .main-content {
+        margin-left: 0; /* Adjust margin to remove gap when sidebar is hidden */
+    }
+}

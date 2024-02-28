@@ -1,0 +1,36 @@
+/* Add custom CSS for the landing page */
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.landing {
+    background-image: url("/landing.jpg");
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.landing-content {
+    margin-bottom: 60vh;
+}
+
+.landing-content p {
+    color: white;
+    font-size: x-large;
+}
+
+.landing-content a {
+    color: white;
+    text-decoration: none;
+}
+
+.landing-content a:hover {
+    color: blue;
+}

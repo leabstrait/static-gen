@@ -1,0 +1,7 @@
+template: index.html
+title: Your Name | Architect
+
+content: |
+    ```markdown
+    [Projects](projects)  |  [About](about.html)  |  [Contact](contact.html)
+    ```
