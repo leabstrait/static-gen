@@ -1,7 +1,7 @@
 **YAML-MD Static Site Generator**
 
 **Description:**
-The YAML-MD Static Site Generator is a Python tool for creating static websites from YAML and Markdown files. It converts YAML files with metadata and Markdown content into HTML pages, using Jinja2 templates for customization. The included example is for an Architecture Portfolio website and can be modified according to requirements.
+The YAML-MD Static Site Generator is a Python script for creating static websites from YAML and Markdown files. It converts YAML files with metadata and Markdown content into HTML pages, using Jinja2 templates for customization. The included example is for an Architecture Portfolio website and can be modified according to requirements.
 
 **Features:**
 - Convert YAML and Markdown to HTML.
