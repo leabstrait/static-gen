@@ -38,7 +38,6 @@ config = {
     },
 }
 
-
 # Load templates
 env = Environment(loader=FileSystemLoader(config["directories"]["template"]))
 
@@ -88,7 +87,6 @@ def preprocess_config(config, base_path=""):
             ]
     return config
 
-
 # Function to get link target based on input
 def get_link_target(input):
     # Example logic to determine link target based on input
@@ -105,6 +103,9 @@ def convert_markdownpath_to_html(markdown_path):
     with open(markdown_path, "r") as f:
         markdown_content = f.read()
         return convert_markdown_to_html(markdown_content)
+
+
+config = preprocess_config(config, base_path="")
 
 
 # Function to copy assets while preserving directory structure
@@ -170,7 +171,7 @@ def process_content(directory):
 
 def main():
     # Process content files
-    config = preprocess_config(config, base_path="")
+
     process_content(config["directories"]["content"])
 
     # Copy assets to output directory
