@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "staticgen"
+version = "0.0.1"
+authors = [
+    { name="Labin Ojha", email="leabstrait@gmail.com" },
+]
+description = "A small static site generator"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "Jinja2==3.1.3",
+    "Markdown==3.5.2",
+    "MarkupSafe==2.1.5",
+]
+
+[project.scripts]
+staticgen = "staticgen.staticgen:main"
+
+[project.urls]
+Homepage = "https://github.com/leabstrait/staticgen"
+Issues = "https://github.com/leabstrait/staticgen/issues"

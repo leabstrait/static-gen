@@ -168,29 +168,29 @@ def process_content(directory):
             with open(output_path, "w") as f:
                 f.write(rendered_content)
 
+def main():
+    # Process content files
+    config = preprocess_config(config, base_path="")
+    process_content(config["directories"]["content"])
 
-# Process content files
-config = preprocess_config(config, base_path="")
-process_content(config["directories"]["content"])
+    # Copy assets to output directory
+    copy_assets(
+        config["directories"]["script"],
+        os.path.join(config["directories"]["output"], "scripts"),
+    )
+    copy_assets(
+        config["directories"]["style"],
+        os.path.join(config["directories"]["output"], "styles"),
+    )
+    copy_assets(
+        config["directories"]["media"],
+        os.path.join(config["directories"]["output"], "media"),
+    )
+    copy_assets(
+        config["directories"]["content"],
+        config["directories"]["output"],
+    )
 
-# Copy assets to output directory
-copy_assets(
-    config["directories"]["script"],
-    os.path.join(config["directories"]["output"], "scripts"),
-)
-copy_assets(
-    config["directories"]["style"],
-    os.path.join(config["directories"]["output"], "styles"),
-)
-copy_assets(
-    config["directories"]["media"],
-    os.path.join(config["directories"]["output"], "media"),
-)
-copy_assets(
-    config["directories"]["content"],
-    config["directories"]["output"],
-)
-
-print(
-    f"Static site generated successfully! Output in {config['directories']['output']}"
-)
+    print(
+        f"Static site generated successfully! Output in {config['directories']['output']}"
+    )
