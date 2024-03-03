@@ -1,0 +1,43 @@
+{% extends 'base.j2' %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block content %}
+  <header>
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+    <ul>
+      {% for keyword in keywords %}
+        <li>{{ keyword }}</li>
+      {% endfor %}
+    </ul>
+    <p>Client: {{ client }}</p>
+    <p>Architect: {{ architect }}</p>
+    <p>Team: {{ team }}</p>
+    <p>Awards: {{ awards }}</p>
+  </header>
+  <section>
+    <h2>Project Images</h2>
+    {% for image in images %}
+      <img src="{{ image }}" alt="Project Image" />
+    {% endfor %}
+  </section>
+  <section>
+    <h2>Project Drawings</h2>
+    {% for drawing in drawings %}
+      <a href="{{ drawing }}">Drawing</a>
+    {% endfor %}
+  </section>
+  <section>
+    <h2>Press Coverage (optional)</h2>
+    <ul>
+      {% for link in press_coverage %}
+        <li>
+          <a href="{{ link }}">Link</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+{% endblock %}

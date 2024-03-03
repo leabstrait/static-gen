@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [project.scripts]
-staticgen = "staticgen.staticgen:main"
+staticgen = "staticgen.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/leabstrait/staticgen"

@@ -6,40 +6,12 @@ import importlib.util
 import textwrap
 import re
 
-# Define configuration as Python data structure
-config = {
-    "directories": {
-        "content": "content",
-        "template": "templates",
-        "script": "scripts",
-        "style": "styles",
-        "media": "media",
-        "output": "docs",
-    },
-    "default_template": "base.html",
-    "baseURL": "https://example.com",
-    "languageCode": "en-us",
-    "title": "My Website",
-    "description": "This is my website",
-    "author": "Your Name",
-    "keywords": "website, blog, portfolio",
-    "copyright": "© Your Name",
-    "menu": [
-        {"name": "Your Name", "url": "[% link / %]"},
-        {"name": "Projects", "url": "[% link /projects %]"},
-        {"name": "About", "url": "[% link /about.py %]"},
-        {"name": "Contact", "url": "[% link /contact.py %]"},
-    ],
-    "social": {
-        "twitter": "username",
-        "github": "username",
-        "linkedin": "username",
-        "email": "username@example.com",
-    },
-}
+spec = importlib.util.spec_from_file_location("config", os.path.join(".", "config.py"))
+config = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(config)
 
 # Load templates
-env = Environment(loader=FileSystemLoader(config["directories"]["template"]))
+env = Environment(loader=FileSystemLoader(config.config["directories"]["template"]))
 
 
 # Function to preprocess strings in the config with shortcodes
@@ -47,13 +19,13 @@ def preprocess_config(config, base_path=""):
     # Define the shortcode patterns and their corresponding functions
     shortcode_patterns = {
         r"\[\%\s*year\s+\%\]": lambda: "2024",  # Example shortcode for current year
-        r"\[\%\s*link\s+([\s\S]+?)\s*\%\]": lambda match: get_link_target(
+        r"\[\%\s*pylink\s+([\s\S]+?)\s*\%\]": lambda match: get_link_target(
             match.group(1)
         ),
-        r"\[\%\s*markdown\n+([\s\S]+?)\s*\%\]": lambda match: convert_markdown_to_html(
+        r"\[\%\s*md\n+([\s\S]+?)\s*\%\]": lambda match: convert_md_to_html(
             match.group(1)
         ),
-        r"\[\%\s*markdownpath\s+([\s\S]+?)\s*\%\]": lambda match: convert_markdownpath_to_html(
+        r"\[\%\s*mdpath\s+([\s\S]+?)\s*\%\]": lambda match: convert_mdpath_to_html(
             os.path.join(base_path, match.group(1))
         ),
         # Add more shortcode patterns and their corresponding functions as needed
@@ -87,25 +59,33 @@ def preprocess_config(config, base_path=""):
             ]
     return config
 
+
 # Function to get link target based on input
-def get_link_target(input):
-    # Example logic to determine link target based on input
-    return input.replace("py", "html")
+def get_link_target(input_path):
+    # Determine the file extension
+    _, extension = os.path.splitext(input_path)
+
+    # For Python files, replace extension with .html
+    if extension == ".py":
+        return os.path.splitext(input_path)[0] + ".html"
+
+    # For other file types, return the input path unchanged
+    return input_path
 
 
 # Function to convert Markdown string to HTML
-def convert_markdown_to_html(markdown_content):
+def convert_md_to_html(markdown_content):
     return markdown.markdown(textwrap.dedent(markdown_content))
 
 
 # Function to convert Markdown file to HTML
-def convert_markdownpath_to_html(markdown_path):
+def convert_mdpath_to_html(markdown_path):
     with open(markdown_path, "r") as f:
         markdown_content = f.read()
-        return convert_markdown_to_html(markdown_content)
+        return convert_md_to_html(markdown_content)
 
 
-config = preprocess_config(config, base_path="")
+config = preprocess_config(config.config, base_path="")
 
 
 # Function to copy assets while preserving directory structure
@@ -168,6 +148,7 @@ def process_content(directory):
             # Write rendered content to output file
             with open(output_path, "w") as f:
                 f.write(rendered_content)
+
 
 def main():
     # Process content files
