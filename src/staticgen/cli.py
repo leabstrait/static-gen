@@ -13,7 +13,8 @@ def init_project(destination):
     if os.path.exists(destination):
         if os.listdir(destination):
             print(f"Error: Directory '{destination}' already exists and is not empty.")
-            return
+            if not input("Do you still want to proceed? [y/N]: ").lower() == "y":
+                return
 
     try:
         import staticgen
