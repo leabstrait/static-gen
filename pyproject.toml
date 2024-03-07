@@ -1,16 +1,11 @@
 [build-system]
-requires = [
-    "setuptools>=61.0",
-    "setuptools-scm>=8.0"
-]
+requires = ["setuptools>=61.0", "setuptools-scm>=8.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "staticgen"
 version = "0.0.1"
-authors = [
-    { name="Labin Ojha", email="leabstrait@gmail.com" },
-]
+authors = [{ name = "Labin Ojha", email = "leabstrait@gmail.com" }]
 description = "A small static site generator"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -19,11 +14,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = [
-    "Jinja2==3.1.3",
-    "Markdown==3.5.2",
-    "MarkupSafe==2.1.5",
-]
+dependencies = ["Jinja2==3.1.3", "Markdown==3.5.2", "MarkupSafe==2.1.5"]
 
 [project.scripts]
 staticgen = "staticgen.cli:main"
@@ -31,3 +22,28 @@ staticgen = "staticgen.cli:main"
 [project.urls]
 Homepage = "https://github.com/leabstrait/staticgen"
 Issues = "https://github.com/leabstrait/staticgen/issues"
+
+[tool.pytest.ini_options]
+addopts = [
+    "-ra",                        # Show extra test summary info for failed and passed tests
+    "--color=yes",                # Enable colorized output in the terminal
+    "--cov=src",                  # Measure coverage for code in the src directory
+    "--cov-report=html:coverage", # Generate HTML coverage report in the 'coverage' directory
+]
+
+# [tool.mypy]
+# mypy_path = "src"
+# check_untyped_defs = true
+# disallow_any_generics = true
+# ignore_missing_imports = true
+# no_implicit_optional = true
+# show_error_codes = true
+# strict_equality = true
+# warn_redundant_casts = true
+# warn_return_any = true
+# warn_unreachable = true
+# warn_unused_configs = true
+# no_implicit_reexport = true
+
+[tool.black]
+line-length = 160

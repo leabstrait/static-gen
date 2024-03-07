@@ -15,19 +15,13 @@ env = Environment(loader=FileSystemLoader(config.config["directories"]["template
 
 
 # Function to preprocess strings in the config with shortcodes
-def preprocess_config(config, base_path=""):
+def preprocess_config(cfg, base_path=""):
     # Define the shortcode patterns and their corresponding functions
     shortcode_patterns = {
         r"\[\%\s*year\s+\%\]": lambda: "2024",  # Example shortcode for current year
-        r"\[\%\s*pylink\s+([\s\S]+?)\s*\%\]": lambda match: get_link_target(
-            match.group(1)
-        ),
-        r"\[\%\s*md\n+([\s\S]+?)\s*\%\]": lambda match: convert_md_to_html(
-            match.group(1)
-        ),
-        r"\[\%\s*mdpath\s+([\s\S]+?)\s*\%\]": lambda match: convert_mdpath_to_html(
-            os.path.join(base_path, match.group(1))
-        ),
+        r"\[\%\s*pylink\s+([\s\S]+?)\s*\%\]": lambda match: get_link_target(match.group(1)),
+        r"\[\%\s*md\n+([\s\S]+?)\s*\%\]": lambda match: convert_md_to_html(match.group(1)),
+        r"\[\%\s*mdpath\s+([\s\S]+?)\s*\%\]": lambda match: convert_mdpath_to_html(os.path.join(base_path, match.group(1))),
         # Add more shortcode patterns and their corresponding functions as needed
     }
 
@@ -40,24 +34,17 @@ def preprocess_config(config, base_path=""):
         return string
 
     # Iterate through each key-value pair in the config
-    for key, value in config.items():
+    for key, value in cfg.items():
         # If the value is a string, preprocess it
         if isinstance(value, str):
-            config[key] = replace_shortcodes(value)
+            cfg[key] = replace_shortcodes(value)
         # If the value is a dictionary, recursively preprocess it
         elif isinstance(value, dict):
             preprocess_config(value, base_path=base_path)
         # If the value is a list, preprocess each element
         elif isinstance(value, list):
-            config[key] = [
-                (
-                    replace_shortcodes(item)
-                    if isinstance(item, str)
-                    else preprocess_config(item, base_path=base_path)
-                )
-                for item in value
-            ]
-    return config
+            cfg[key] = [(replace_shortcodes(item) if isinstance(item, str) else preprocess_config(item, base_path=base_path)) for item in value]
+    return cfg
 
 
 # Function to get link target based on input
@@ -85,7 +72,7 @@ def convert_mdpath_to_html(markdown_path):
         return convert_md_to_html(markdown_content)
 
 
-config = preprocess_config(config.config, base_path="")
+config_p = preprocess_config(config.config, base_path="")
 
 
 # Function to copy assets while preserving directory structure
@@ -119,29 +106,21 @@ def process_content(directory):
             processed_content_config = preprocess_config(module.config, base_path=root)
 
             # Get template name and remove it from processed content config
-            template_name = processed_content_config.pop(
-                "template", config["default_template"]
-            )
+            template_name = processed_content_config.pop("template", config_p["default_template"])
 
             # Load template
             template = env.get_template(template_name)
 
             # Render HTML content passing in config and processed_content_config
             rendered_content = template.render(
-                **{
-                    key: value
-                    for key, value in config.items()
-                    if key not in processed_content_config.keys()
-                },
+                **{key: value for key, value in config_p.items() if key not in processed_content_config.keys()},
                 **processed_content_config,
             )
 
             # Compute relative path of content file within content directory
-            rel_path = os.path.relpath(content_path, config["directories"]["content"])
+            rel_path = os.path.relpath(content_path, config_p["directories"]["content"])
             # Construct output path
-            output_path = os.path.join(
-                config["directories"]["output"], rel_path.replace(".py", ".html")
-            )
+            output_path = os.path.join(config_p["directories"]["output"], rel_path.replace(".py", ".html"))
 
             # Ensure directory structure exists in the output directory
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -153,26 +132,24 @@ def process_content(directory):
 def main():
     # Process content files
 
-    process_content(config["directories"]["content"])
+    process_content(config_p["directories"]["content"])
 
     # Copy assets to output directory
     copy_assets(
-        config["directories"]["script"],
-        os.path.join(config["directories"]["output"], "scripts"),
+        config_p["directories"]["script"],
+        os.path.join(config_p["directories"]["output"], "scripts"),
     )
     copy_assets(
-        config["directories"]["style"],
-        os.path.join(config["directories"]["output"], "styles"),
+        config_p["directories"]["style"],
+        os.path.join(config_p["directories"]["output"], "styles"),
     )
     copy_assets(
-        config["directories"]["media"],
-        os.path.join(config["directories"]["output"], "media"),
+        config_p["directories"]["media"],
+        os.path.join(config_p["directories"]["output"], "media"),
     )
     copy_assets(
-        config["directories"]["content"],
-        config["directories"]["output"],
+        config_p["directories"]["content"],
+        config_p["directories"]["output"],
     )
 
-    print(
-        f"Static site generated successfully! Output in {config['directories']['output']}"
-    )
+    print(f"Static site generated successfully! Output in {config_p['directories']['output']}")
