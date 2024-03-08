@@ -1,8 +1,6 @@
 # Static Site Generator
 
-![Tests](https://github.com/leabstrait/static-gen/actions/workflows/tests.yml/badge.svg)
-
-## `staticgen`
+## `staticgen` [![Tests](https://github.com/leabstrait/static-gen/actions/workflows/tests.yml/badge.svg)](https://github.com/leabstrait/static-gen/actions/workflows/tests.yml)
 
 This is a Python package for generating static websites from Markdown content and Jinja2 templates.
 
