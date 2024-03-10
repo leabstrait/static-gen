@@ -1,94 +1,11 @@
 import os
-import shutil
-import markdown
 from jinja2 import Environment, FileSystemLoader
 import importlib.util
-import textwrap
-import re
-
-spec = importlib.util.spec_from_file_location("config", os.path.join(".", "config.py"))
-config = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(config)
-
-# Load templates
-env = Environment(loader=FileSystemLoader(config.config["directories"]["template"]))
-
-
-# Function to preprocess strings in the config with shortcodes
-def preprocess_config(cfg, base_path=""):
-    # Define the shortcode patterns and their corresponding functions
-    shortcode_patterns = {
-        r"\[\%\s*year\s+\%\]": lambda: "2024",  # Example shortcode for current year
-        r"\[\%\s*pylink\s+([\s\S]+?)\s*\%\]": lambda match: get_link_target(match.group(1)),
-        r"\[\%\s*md\n+([\s\S]+?)\s*\%\]": lambda match: convert_md_to_html(match.group(1)),
-        r"\[\%\s*mdpath\s+([\s\S]+?)\s*\%\]": lambda match: convert_mdpath_to_html(os.path.join(base_path, match.group(1))),
-        # Add more shortcode patterns and their corresponding functions as needed
-    }
-
-    # Function to replace shortcodes in a string
-    def replace_shortcodes(string):
-        # Iterate through each shortcode pattern
-        for pattern, shortcode_func in shortcode_patterns.items():
-            # Replace the shortcode with its corresponding value
-            string = re.sub(pattern, lambda match: shortcode_func(match), string)
-        return string
-
-    # Iterate through each key-value pair in the config
-    for key, value in cfg.items():
-        # If the value is a string, preprocess it
-        if isinstance(value, str):
-            cfg[key] = replace_shortcodes(value)
-        # If the value is a dictionary, recursively preprocess it
-        elif isinstance(value, dict):
-            preprocess_config(value, base_path=base_path)
-        # If the value is a list, preprocess each element
-        elif isinstance(value, list):
-            cfg[key] = [(replace_shortcodes(item) if isinstance(item, str) else preprocess_config(item, base_path=base_path)) for item in value]
-    return cfg
-
-
-# Function to get link target based on input
-def get_link_target(input_path):
-    # Determine the file extension
-    _, extension = os.path.splitext(input_path)
-
-    # For Python files, replace extension with .html
-    if extension == ".py":
-        return os.path.splitext(input_path)[0] + ".html"
-
-    # For other file types, return the input path unchanged
-    return input_path
-
-
-# Function to convert Markdown string to HTML
-def convert_md_to_html(markdown_content):
-    return markdown.markdown(textwrap.dedent(markdown_content))
-
-
-# Function to convert Markdown file to HTML
-def convert_mdpath_to_html(markdown_path):
-    with open(markdown_path, "r") as f:
-        markdown_content = f.read()
-        return convert_md_to_html(markdown_content)
-
-
-config_p = preprocess_config(config.config, base_path="")
-
-
-# Function to copy assets while preserving directory structure
-def copy_assets(source_dir, destination_dir):
-    for root, _, files in os.walk(source_dir):
-        for file in files:
-            if not (file.endswith(".py") or file.endswith(".md")):
-                source_path = os.path.join(root, file)
-                relative_path = os.path.relpath(source_path, source_dir)
-                destination_path = os.path.join(destination_dir, relative_path)
-                os.makedirs(os.path.dirname(destination_path), exist_ok=True)
-                shutil.copyfile(source_path, destination_path)
-
+from .utils import shortcodes
+from .utils import assets
 
 # Function to process each content file
-def process_content(directory):
+def process_content(jinjaenv, config_p, directory):
     for root, _, files in os.walk(directory):
         for filename in files:
             if not filename.endswith(".py"):
@@ -103,13 +20,13 @@ def process_content(directory):
             spec.loader.exec_module(module)
 
             # Preprocess content config
-            processed_content_config = preprocess_config(module.config, base_path=root)
+            processed_content_config = shortcodes.preprocess_config(module.config, base_path=root)
 
             # Get template name and remove it from processed content config
             template_name = processed_content_config.pop("template", config_p["default_template"])
 
             # Load template
-            template = env.get_template(template_name)
+            template = jinjaenv.get_template(template_name)
 
             # Render HTML content passing in config and processed_content_config
             rendered_content = template.render(
@@ -130,24 +47,33 @@ def process_content(directory):
 
 
 def main():
-    # Process content files
+    config_path = os.path.join(".", "config.py")
+    spec = importlib.util.spec_from_file_location("config", config_path)
+    config = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(config)
+    config_p = shortcodes.preprocess_config(config.config, base_path="")
 
-    process_content(config_p["directories"]["content"])
+    # Load templates into Jinja environment
+    jinjaenv = Environment(loader=FileSystemLoader(config.config["directories"]["template"]))
+
+    # Process content files
+    content_dir = config_p["directories"]["content"]
+    process_content(jinjaenv, config_p, content_dir)
 
     # Copy assets to output directory
-    copy_assets(
+    assets.copy_assets(
         config_p["directories"]["script"],
         os.path.join(config_p["directories"]["output"], "scripts"),
     )
-    copy_assets(
+    assets.copy_assets(
         config_p["directories"]["style"],
         os.path.join(config_p["directories"]["output"], "styles"),
     )
-    copy_assets(
+    assets.copy_assets(
         config_p["directories"]["media"],
         os.path.join(config_p["directories"]["output"], "media"),
     )
-    copy_assets(
+    assets.copy_assets(
         config_p["directories"]["content"],
         config_p["directories"]["output"],
     )

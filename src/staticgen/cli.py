@@ -2,6 +2,7 @@ import argparse
 import shutil
 import os
 import importlib.resources
+from staticgen import staticgen
 
 
 def init_project(destination):
@@ -47,8 +48,6 @@ def main(args=None):
     if args.command == "init":
         init_project(args.destination)
     elif args.command == "gen":
-        from staticgen import staticgen
-
         staticgen.main()
     else:
         print("Invalid command")
