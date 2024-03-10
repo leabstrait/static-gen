@@ -24,7 +24,7 @@ jobs:
         python-version: '3.x'  # Specify the Python version you need
 
     - name: Install staticgen tool
-      run: pip install git+https://github.com/leabstrait/static-gen  # Adjust this command based on your project setup
+      run: pip install git+https://github.com/leabstrait/staticgen  # Adjust this command based on your project setup
 
     - name: Set up docs directory
       run: |

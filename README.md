@@ -1,11 +1,11 @@
-## `staticgen`<div align="right">[![Tests](https://github.com/leabstrait/static-gen/actions/workflows/tests.yml/badge.svg)](https://github.com/leabstrait/static-gen/actions/workflows/tests.yml)</div>
+## `staticgen`<div align="right">[![Tests](https://github.com/leabstrait/staticgen/actions/workflows/tests.yml/badge.svg)](https://github.com/leabstrait/staticgen/actions/workflows/tests.yml)</div>
 
 `staticgen` simplifies static site generation from Markdown content and Jinja2 templates.
 
 ## Installation and Upgrade
 
 ```bash
-pip install git+https://github.com/leabstrait/static-gen
+pip install git+https://github.com/leabstrait/staticgen
 ```
 
 ## Usage
